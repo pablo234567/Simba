@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Liste de Courses</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      color: #1a202c;
+    }
+
+    header {
+      background: #2d6a4f;
+      color: white;
+      padding: 16px 20px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    header p {
+      font-size: 0.8rem;
+      opacity: 0.85;
+      margin-top: 2px;
+    }
+
+    main {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 20px 16px;
+    }
+
+    /* Photo section */
+    .photo-section {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+
+    .photo-section h2 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #718096;
+      margin-bottom: 14px;
+    }
+
+    .photo-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: #2d6a4f;
+      color: white;
+    }
+
+    .btn-primary:hover { background: #1b4332; }
+    .btn-primary:active { transform: scale(0.97); }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #4a5568;
+    }
+
+    .btn-secondary:hover { background: #cbd5e0; }
+    .btn-secondary:active { transform: scale(0.97); }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    input[type="file"] { display: none; }
+
+    /* Preview */
+    #preview-container {
+      margin-top: 14px;
+      display: none;
+    }
+
+    #preview-container img {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 2px solid #e2e8f0;
+    }
+
+    /* Spinner */
+    .spinner-overlay {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px;
+      color: #2d6a4f;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .spinner {
+      width: 22px;
+      height: 22px;
+      border: 3px solid #c6f6d5;
+      border-top-color: #2d6a4f;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Error */
+    .error-msg {
+      display: none;
+      background: #fff5f5;
+      color: #c53030;
+      border: 1px solid #fed7d7;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 0.88rem;
+      margin-top: 12px;
+    }
+
+    /* List section */
+    .list-section {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .list-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .list-header h2 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #718096;
+    }
+
+    .list-stats {
+      font-size: 0.8rem;
+      color: #a0aec0;
+    }
+
+    .clear-btn {
+      background: none;
+      border: none;
+      color: #e53e3e;
+      font-size: 0.8rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+
+    .clear-btn:hover { background: #fff5f5; }
+
+    #shopping-list {
+      list-style: none;
+    }
+
+    #shopping-list li {
+      display: flex;
+      align-items: center;
+      padding: 11px 0;
+      border-bottom: 1px solid #f7fafc;
+      gap: 12px;
+      animation: slideIn 0.2s ease;
+    }
+
+    #shopping-list li:last-child { border-bottom: none; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-8px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    #shopping-list li input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      accent-color: #2d6a4f;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .item-text {
+      flex: 1;
+      font-size: 0.95rem;
+      transition: color 0.15s, text-decoration 0.15s;
+      text-transform: capitalize;
+    }
+
+    .item-text.checked {
+      color: #a0aec0;
+      text-decoration: line-through;
+    }
+
+    .item-delete {
+      background: none;
+      border: none;
+      color: #cbd5e0;
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: color 0.15s;
+      line-height: 1;
+    }
+
+    .item-delete:hover { color: #e53e3e; }
+
+    /* Add item manually */
+    .add-item {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #f0f4f8;
+    }
+
+    .add-item input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .add-item input:focus { border-color: #2d6a4f; }
+
+    .add-item button {
+      padding: 10px 16px;
+      background: #2d6a4f;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .add-item button:hover { background: #1b4332; }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 24px 0;
+      color: #a0aec0;
+    }
+
+    .empty-state .icon { font-size: 2.5rem; margin-bottom: 8px; }
+    .empty-state p { font-size: 0.88rem; }
+
+    /* Progress bar */
+    .progress-bar-container {
+      margin-top: 12px;
+      background: #f0f4f8;
+      border-radius: 99px;
+      height: 6px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: #2d6a4f;
+      border-radius: 99px;
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🛒 Liste de Courses</h1>
+    <p>Prends une photo de ta liste pour l'importer</p>
+  </header>
+
+  <main>
+    <!-- Photo section -->
+    <div class="photo-section">
+      <h2>Importer une liste</h2>
+      <div class="photo-actions">
+        <button class="btn btn-primary" onclick="document.getElementById('camera-input').click()">
+          📷 Photo
+        </button>
+        <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">
+          🖼️ Galerie
+        </button>
+      </div>
+
+      <input type="file" id="camera-input" accept="image/*" capture="environment">
+      <input type="file" id="file-input" accept="image/*">
+
+      <div id="preview-container">
+        <img id="preview-img" alt="Aperçu">
+      </div>
+
+      <div class="spinner-overlay" id="spinner">
+        <div class="spinner"></div>
+        Analyse en cours…
+      </div>
+
+      <div class="error-msg" id="error-msg"></div>
+    </div>
+
+    <!-- Shopping list -->
+    <div class="list-section">
+      <div class="list-header">
+        <h2>Ma liste</h2>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="list-stats" id="list-stats"></span>
+          <button class="clear-btn" id="clear-btn" onclick="clearList()" style="display:none">Vider</button>
+        </div>
+      </div>
+
+      <div class="progress-bar-container" id="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+
+      <div class="empty-state" id="empty-state">
+        <div class="icon">🧾</div>
+        <p>Ta liste est vide.<br>Prends une photo ou ajoute des articles.</p>
+      </div>
+
+      <ul id="shopping-list"></ul>
+
+      <div class="add-item">
+        <input type="text" id="manual-input" placeholder="Ajouter un article…" onkeydown="if(event.key==='Enter') addManualItem()">
+        <button onclick="addManualItem()">＋</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let items = JSON.parse(localStorage.getItem('shopping-list') || '[]');
+    renderList();
+
+    function handleFile(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target.result;
+        document.getElementById('preview-img').src = dataUrl;
+        document.getElementById('preview-container').style.display = 'block';
+        analyzeImage(dataUrl);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    document.getElementById('camera-input').addEventListener('change', e => handleFile(e.target.files[0]));
+    document.getElementById('file-input').addEventListener('change', e => handleFile(e.target.files[0]));
+
+    async function analyzeImage(dataUrl) {
+      const spinner = document.getElementById('spinner');
+      const errorEl = document.getElementById('error-msg');
+      errorEl.style.display = 'none';
+      spinner.style.display = 'flex';
+
+      try {
+        const res = await fetch('/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: dataUrl })
+        });
+
+        const data = await res.json();
+
+        if (data.error) throw new Error(data.error);
+
+        // Add new items (avoid duplicates)
+        const existing = items.map(i => i.text.toLowerCase());
+        let added = 0;
+        for (const item of data.items) {
+          if (!existing.includes(item.toLowerCase())) {
+            items.push({ text: item, checked: false });
+            added++;
+          }
+        }
+
+        saveList();
+        renderList();
+
+        if (added === 0) {
+          showError('Aucun nouvel article trouvé (tous déjà présents).');
+        }
+      } catch (err) {
+        showError('Erreur : ' + err.message);
+      } finally {
+        spinner.style.display = 'none';
+      }
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('error-msg');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    function renderList() {
+      const ul = document.getElementById('shopping-list');
+      const emptyState = document.getElementById('empty-state');
+      const clearBtn = document.getElementById('clear-btn');
+      const statsEl = document.getElementById('list-stats');
+      const progressContainer = document.getElementById('progress-container');
+      const progressBar = document.getElementById('progress-bar');
+
+      ul.innerHTML = '';
+
+      if (items.length === 0) {
+        emptyState.style.display = 'block';
+        clearBtn.style.display = 'none';
+        statsEl.textContent = '';
+        progressContainer.style.display = 'none';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      clearBtn.style.display = 'block';
+
+      const checked = items.filter(i => i.checked).length;
+      statsEl.textContent = `${checked}/${items.length}`;
+
+      if (items.length > 1) {
+        progressContainer.style.display = 'block';
+        progressBar.style.width = `${(checked / items.length) * 100}%`;
+      } else {
+        progressContainer.style.display = 'none';
+      }
+
+      items.forEach((item, idx) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <input type="checkbox" id="item-${idx}" ${item.checked ? 'checked' : ''} onchange="toggleItem(${idx})">
+          <label for="item-${idx}" class="item-text ${item.checked ? 'checked' : ''}">${escapeHtml(item.text)}</label>
+          <button class="item-delete" onclick="deleteItem(${idx})" title="Supprimer">✕</button>
+        `;
+        ul.appendChild(li);
+      });
+    }
+
+    function toggleItem(idx) {
+      items[idx].checked = !items[idx].checked;
+      saveList();
+      renderList();
+    }
+
+    function deleteItem(idx) {
+      items.splice(idx, 1);
+      saveList();
+      renderList();
+    }
+
+    function clearList() {
+      if (confirm('Vider toute la liste ?')) {
+        items = [];
+        saveList();
+        renderList();
+      }
+    }
+
+    function addManualItem() {
+      const input = document.getElementById('manual-input');
+      const text = input.value.trim();
+      if (!text) return;
+      items.push({ text, checked: false });
+      input.value = '';
+      saveList();
+      renderList();
+    }
+
+    function saveList() {
+      localStorage.setItem('shopping-list', JSON.stringify(items));
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+  </script>
+</body>
+</html>
