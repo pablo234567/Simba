@@ -17,13 +17,12 @@ def index():
 def analyze():
     data = request.get_json()
     if not data or "image" not in data:
-        return jsonify({"error": "No image provided"}), 400
+        return jsonify({"error": "Aucune image fournie"}), 400
 
     image_data = data["image"]
-    # Strip the data URL prefix if present
     if "," in image_data:
-        media_type_part, image_data = image_data.split(",", 1)
-        media_type = media_type_part.split(":")[1].split(";")[0]
+        header, image_data = image_data.split(",", 1)
+        media_type = header.split(":")[1].split(";")[0]
     else:
         media_type = "image/jpeg"
 
@@ -46,10 +45,11 @@ def analyze():
                         {
                             "type": "text",
                             "text": (
-                                "This is a shopping list. Extract all items from it. "
-                                "Return ONLY a JSON array of strings, one item per entry. "
-                                "Example: [\"apples\", \"milk\", \"bread\"]. "
-                                "No explanation, no markdown, just the JSON array."
+                                "Voici une liste de courses. "
+                                "Extrais tous les articles. "
+                                "Réponds UNIQUEMENT avec un tableau JSON de chaînes de caractères. "
+                                "Exemple : [\"pommes\", \"lait\", \"pain\"]. "
+                                "Aucune explication, aucun markdown, juste le tableau JSON."
                             ),
                         },
                     ],
@@ -58,19 +58,18 @@ def analyze():
         )
 
         text = response.content[0].text.strip()
-        # Clean up any markdown code blocks if present
         if text.startswith("```"):
-            text = text.split("```")[1]
-            if text.startswith("json"):
-                text = text[4:]
-            text = text.strip()
+            lines = text.split("\n")
+            text = "\n".join(lines[1:-1]).strip()
 
         items = json.loads(text)
+        if not isinstance(items, list):
+            raise ValueError("Expected a list")
+        items = [str(i).strip() for i in items if str(i).strip()]
         return jsonify({"items": items})
 
-    except json.JSONDecodeError:
-        # If Claude didn't return valid JSON, try to parse line by line
-        lines = [line.strip("- •*").strip() for line in text.splitlines() if line.strip()]
+    except (json.JSONDecodeError, ValueError):
+        lines = [l.strip().lstrip("-•*·").strip() for l in text.splitlines() if l.strip()]
         return jsonify({"items": lines})
     except anthropic.APIError as e:
         return jsonify({"error": str(e)}), 500

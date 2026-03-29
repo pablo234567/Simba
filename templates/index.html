@@ -2,517 +2,631 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Liste de Courses</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Courses</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green: #16a34a;
+      --green-light: #dcfce7;
+      --green-dark: #14532d;
+      --red: #dc2626;
+      --red-light: #fee2e2;
+      --bg: #f9fafb;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --text: #111827;
+      --muted: #6b7280;
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #f0f4f8;
-      min-height: 100vh;
-      color: #1a202c;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      padding-bottom: env(safe-area-inset-bottom);
     }
 
-    header {
-      background: #2d6a4f;
+    /* ── Header ── */
+    .header {
+      background: var(--green);
       color: white;
-      padding: 16px 20px;
-      text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      padding: 18px 20px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
-    header h1 {
-      font-size: 1.4rem;
+    .header-left h1 {
+      font-size: 1.25rem;
       font-weight: 700;
-      letter-spacing: 0.02em;
     }
 
-    header p {
+    .header-left p {
+      font-size: 0.75rem;
+      opacity: 0.8;
+      margin-top: 1px;
+    }
+
+    .header-badge {
+      background: rgba(255,255,255,0.2);
+      border-radius: 99px;
+      padding: 4px 12px;
       font-size: 0.8rem;
-      opacity: 0.85;
-      margin-top: 2px;
+      font-weight: 600;
     }
 
-    main {
+    /* ── Container ── */
+    .container {
       max-width: 480px;
       margin: 0 auto;
-      padding: 20px 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    /* Photo section */
-    .photo-section {
-      background: white;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-      margin-bottom: 20px;
+    /* ── Card ── */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
     }
 
-    .photo-section h2 {
-      font-size: 0.85rem;
+    .card-header {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-size: 0.7rem;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: #718096;
-      margin-bottom: 14px;
+      color: var(--muted);
     }
 
-    .photo-actions {
+    /* ── Upload zone ── */
+    .upload-zone {
+      margin: 12px;
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 24px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: var(--green);
+      background: var(--green-light);
+    }
+
+    .upload-zone .icon {
+      font-size: 2rem;
+      margin-bottom: 6px;
+    }
+
+    .upload-zone p {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .upload-zone strong {
+      display: block;
+      color: var(--green);
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+    }
+
+    .btn-row {
       display: flex;
-      gap: 10px;
+      gap: 8px;
+      padding: 0 12px 12px;
     }
 
     .btn {
       flex: 1;
-      padding: 12px;
+      padding: 11px 8px;
       border: none;
-      border-radius: 12px;
-      font-size: 0.95rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.15s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 5px;
+      transition: filter 0.15s, transform 0.1s;
     }
 
-    .btn-primary {
-      background: #2d6a4f;
-      color: white;
-    }
+    .btn:active { transform: scale(0.96); }
+    .btn:disabled { opacity: 0.45; pointer-events: none; }
 
-    .btn-primary:hover { background: #1b4332; }
-    .btn-primary:active { transform: scale(0.97); }
-
-    .btn-secondary {
-      background: #e2e8f0;
-      color: #4a5568;
-    }
-
-    .btn-secondary:hover { background: #cbd5e0; }
-    .btn-secondary:active { transform: scale(0.97); }
-
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
+    .btn-green { background: var(--green); color: white; }
+    .btn-green:hover { filter: brightness(1.1); }
+    .btn-outline { background: var(--bg); color: var(--text); border: 1.5px solid var(--border); }
+    .btn-outline:hover { background: var(--border); }
 
     input[type="file"] { display: none; }
 
-    /* Preview */
-    #preview-container {
-      margin-top: 14px;
+    /* ── Preview ── */
+    #preview-wrap {
       display: none;
+      position: relative;
+      margin: 0 12px 12px;
     }
 
-    #preview-container img {
+    #preview-wrap img {
       width: 100%;
-      max-height: 220px;
+      max-height: 200px;
       object-fit: cover;
       border-radius: 10px;
-      border: 2px solid #e2e8f0;
+      display: block;
     }
 
-    /* Spinner */
-    .spinner-overlay {
+    #remove-preview {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 26px;
+      height: 26px;
+      background: rgba(0,0,0,0.55);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Analyzing state ── */
+    .analyzing {
       display: none;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      padding: 16px;
-      color: #2d6a4f;
+      padding: 14px;
+      color: var(--green);
+      font-size: 0.875rem;
       font-weight: 500;
-      font-size: 0.9rem;
     }
 
-    .spinner {
-      width: 22px;
-      height: 22px;
-      border: 3px solid #c6f6d5;
-      border-top-color: #2d6a4f;
+    .dot-loader span {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      background: var(--green);
+      animation: bounce 1.2s ease-in-out infinite;
     }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .dot-loader span:nth-child(2) { animation-delay: 0.2s; }
+    .dot-loader span:nth-child(3) { animation-delay: 0.4s; }
 
-    /* Error */
-    .error-msg {
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+
+    /* ── Error ── */
+    .error-box {
       display: none;
-      background: #fff5f5;
-      color: #c53030;
-      border: 1px solid #fed7d7;
-      border-radius: 10px;
-      padding: 12px;
-      font-size: 0.88rem;
-      margin-top: 12px;
+      margin: 0 12px 12px;
+      background: var(--red-light);
+      color: var(--red);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.82rem;
     }
 
-    /* List section */
-    .list-section {
-      background: white;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    /* ── Success flash ── */
+    .flash {
+      display: none;
+      margin: 0 12px 12px;
+      background: var(--green-light);
+      color: var(--green-dark);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.82rem;
+      font-weight: 500;
     }
 
-    .list-header {
+    /* ── Progress ── */
+    .progress-bar {
+      height: 3px;
+      background: var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--green);
+      transition: width 0.4s ease;
+    }
+
+    /* ── List ── */
+    .list-actions {
       display: flex;
+      gap: 8px;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
     }
 
-    .list-header h2 {
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #718096;
-    }
-
-    .list-stats {
-      font-size: 0.8rem;
-      color: #a0aec0;
-    }
-
-    .clear-btn {
+    .text-btn {
       background: none;
       border: none;
-      color: #e53e3e;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 6px;
+      padding: 3px 6px;
+      border-radius: 5px;
       transition: background 0.15s;
     }
 
-    .clear-btn:hover { background: #fff5f5; }
+    .text-btn-red { color: var(--red); }
+    .text-btn-red:hover { background: var(--red-light); }
+    .text-btn-muted { color: var(--muted); }
+    .text-btn-muted:hover { background: var(--bg); }
 
-    #shopping-list {
-      list-style: none;
+    #list-wrap {
+      padding: 4px 0;
     }
 
-    #shopping-list li {
+    .item {
       display: flex;
       align-items: center;
-      padding: 11px 0;
-      border-bottom: 1px solid #f7fafc;
       gap: 12px;
-      animation: slideIn 0.2s ease;
+      padding: 11px 16px;
+      border-bottom: 1px solid #f3f4f6;
+      animation: fadeSlide 0.18s ease;
     }
 
-    #shopping-list li:last-child { border-bottom: none; }
+    .item:last-child { border-bottom: none; }
 
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-8px); }
-      to { opacity: 1; transform: translateX(0); }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    #shopping-list li input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
-      border-radius: 6px;
-      accent-color: #2d6a4f;
+    .item input[type="checkbox"] {
+      width: 19px;
+      height: 19px;
+      accent-color: var(--green);
       cursor: pointer;
       flex-shrink: 0;
     }
 
-    .item-text {
+    .item-label {
       flex: 1;
       font-size: 0.95rem;
-      transition: color 0.15s, text-decoration 0.15s;
+      cursor: pointer;
+      word-break: break-word;
+      transition: color 0.15s;
       text-transform: capitalize;
     }
 
-    .item-text.checked {
-      color: #a0aec0;
+    .item-label.done {
+      color: #9ca3af;
       text-decoration: line-through;
     }
 
-    .item-delete {
+    .item-del {
       background: none;
       border: none;
-      color: #cbd5e0;
+      color: #d1d5db;
       cursor: pointer;
-      font-size: 1.1rem;
-      padding: 2px 6px;
+      font-size: 1rem;
+      padding: 2px 5px;
       border-radius: 4px;
       transition: color 0.15s;
       line-height: 1;
+      flex-shrink: 0;
     }
 
-    .item-delete:hover { color: #e53e3e; }
+    .item-del:hover { color: var(--red); }
 
-    /* Add item manually */
-    .add-item {
+    /* ── Empty ── */
+    .empty {
+      text-align: center;
+      padding: 28px 16px;
+      color: var(--muted);
+    }
+
+    .empty .big { font-size: 2.2rem; margin-bottom: 6px; }
+    .empty p { font-size: 0.85rem; line-height: 1.5; }
+
+    /* ── Add manually ── */
+    .add-row {
       display: flex;
       gap: 8px;
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid #f0f4f8;
+      padding: 10px 12px;
+      border-top: 1px solid var(--border);
     }
 
-    .add-item input {
+    .add-row input {
       flex: 1;
-      padding: 10px 14px;
-      border: 2px solid #e2e8f0;
-      border-radius: 10px;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
       font-size: 0.9rem;
       outline: none;
-      transition: border-color 0.15s;
+      transition: border-color 0.2s;
+      background: var(--bg);
     }
 
-    .add-item input:focus { border-color: #2d6a4f; }
+    .add-row input:focus { border-color: var(--green); background: white; }
 
-    .add-item button {
-      padding: 10px 16px;
-      background: #2d6a4f;
+    .add-row button {
+      padding: 9px 14px;
+      background: var(--green);
       color: white;
       border: none;
-      border-radius: 10px;
-      font-size: 1.2rem;
+      border-radius: 9px;
+      font-size: 1.1rem;
       cursor: pointer;
-      transition: background 0.15s;
+      transition: filter 0.15s;
     }
 
-    .add-item button:hover { background: #1b4332; }
-
-    /* Empty state */
-    .empty-state {
-      text-align: center;
-      padding: 24px 0;
-      color: #a0aec0;
-    }
-
-    .empty-state .icon { font-size: 2.5rem; margin-bottom: 8px; }
-    .empty-state p { font-size: 0.88rem; }
-
-    /* Progress bar */
-    .progress-bar-container {
-      margin-top: 12px;
-      background: #f0f4f8;
-      border-radius: 99px;
-      height: 6px;
-      overflow: hidden;
-      display: none;
-    }
-
-    .progress-bar {
-      height: 100%;
-      background: #2d6a4f;
-      border-radius: 99px;
-      transition: width 0.3s ease;
-    }
+    .add-row button:hover { filter: brightness(1.1); }
   </style>
 </head>
 <body>
-  <header>
-    <h1>🛒 Liste de Courses</h1>
-    <p>Prends une photo de ta liste pour l'importer</p>
-  </header>
 
-  <main>
-    <!-- Photo section -->
-    <div class="photo-section">
-      <h2>Importer une liste</h2>
-      <div class="photo-actions">
-        <button class="btn btn-primary" onclick="document.getElementById('camera-input').click()">
-          📷 Photo
-        </button>
-        <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">
-          🖼️ Galerie
-        </button>
-      </div>
+<header class="header">
+  <div class="header-left">
+    <h1>🛒 Courses</h1>
+    <p>Photo → liste automatique</p>
+  </div>
+  <span class="header-badge" id="header-badge" style="display:none"></span>
+</header>
 
-      <input type="file" id="camera-input" accept="image/*" capture="environment">
-      <input type="file" id="file-input" accept="image/*">
+<div class="container">
 
-      <div id="preview-container">
-        <img id="preview-img" alt="Aperçu">
-      </div>
-
-      <div class="spinner-overlay" id="spinner">
-        <div class="spinner"></div>
-        Analyse en cours…
-      </div>
-
-      <div class="error-msg" id="error-msg"></div>
+  <!-- Scan card -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Scanner une liste</span>
     </div>
 
-    <!-- Shopping list -->
-    <div class="list-section">
-      <div class="list-header">
-        <h2>Ma liste</h2>
-        <div style="display:flex;align-items:center;gap:10px">
-          <span class="list-stats" id="list-stats"></span>
-          <button class="clear-btn" id="clear-btn" onclick="clearList()" style="display:none">Vider</button>
-        </div>
-      </div>
+    <div class="upload-zone" id="drop-zone">
+      <div class="icon">📷</div>
+      <strong>Prends ou dépose une photo</strong>
+      <p>JPG, PNG, HEIC · la liste sera extraite automatiquement</p>
+    </div>
 
-      <div class="progress-bar-container" id="progress-container">
-        <div class="progress-bar" id="progress-bar"></div>
-      </div>
+    <div class="btn-row">
+      <button class="btn btn-green" onclick="document.getElementById('cam').click()">
+        📷 Appareil photo
+      </button>
+      <button class="btn btn-outline" onclick="document.getElementById('gal').click()">
+        🖼 Galerie
+      </button>
+    </div>
 
-      <div class="empty-state" id="empty-state">
-        <div class="icon">🧾</div>
-        <p>Ta liste est vide.<br>Prends une photo ou ajoute des articles.</p>
-      </div>
+    <input type="file" id="cam" accept="image/*" capture="environment">
+    <input type="file" id="gal" accept="image/*">
 
-      <ul id="shopping-list"></ul>
+    <div id="preview-wrap">
+      <img id="preview-img" alt="">
+      <button id="remove-preview" onclick="resetPreview()">✕</button>
+    </div>
 
-      <div class="add-item">
-        <input type="text" id="manual-input" placeholder="Ajouter un article…" onkeydown="if(event.key==='Enter') addManualItem()">
-        <button onclick="addManualItem()">＋</button>
+    <div class="analyzing" id="analyzing">
+      <div class="dot-loader"><span></span><span></span><span></span></div>
+      Claude analyse la photo…
+    </div>
+
+    <div class="error-box" id="error-box"></div>
+    <div class="flash" id="flash-box"></div>
+  </div>
+
+  <!-- List card -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Ma liste</span>
+      <div class="list-actions">
+        <button class="text-btn text-btn-muted" id="uncheck-btn" onclick="uncheckAll()" style="display:none">Tout décocher</button>
+        <button class="text-btn text-btn-red" id="clear-btn" onclick="clearList()" style="display:none">Tout supprimer</button>
       </div>
     </div>
-  </main>
 
-  <script>
-    let items = JSON.parse(localStorage.getItem('shopping-list') || '[]');
-    renderList();
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
 
-    function handleFile(file) {
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const dataUrl = e.target.result;
-        document.getElementById('preview-img').src = dataUrl;
-        document.getElementById('preview-container').style.display = 'block';
-        analyzeImage(dataUrl);
-      };
-      reader.readAsDataURL(file);
-    }
+    <div id="list-wrap">
+      <div class="empty" id="empty-state">
+        <div class="big">🧾</div>
+        <p>La liste est vide.<br>Scanne une photo ou ajoute des articles.</p>
+      </div>
+      <ul id="item-list" style="list-style:none"></ul>
+    </div>
 
-    document.getElementById('camera-input').addEventListener('change', e => handleFile(e.target.files[0]));
-    document.getElementById('file-input').addEventListener('change', e => handleFile(e.target.files[0]));
+    <div class="add-row">
+      <input type="text" id="manual-input" placeholder="Ajouter un article…" onkeydown="if(event.key==='Enter')addManual()">
+      <button onclick="addManual()">＋</button>
+    </div>
+  </div>
 
-    async function analyzeImage(dataUrl) {
-      const spinner = document.getElementById('spinner');
-      const errorEl = document.getElementById('error-msg');
-      errorEl.style.display = 'none';
-      spinner.style.display = 'flex';
+</div>
 
-      try {
-        const res = await fetch('/analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image: dataUrl })
-        });
+<script>
+  // ── State ──────────────────────────────────────────
+  let items = JSON.parse(localStorage.getItem('items') || '[]');
+  render();
 
-        const data = await res.json();
+  // ── File inputs ────────────────────────────────────
+  document.getElementById('cam').addEventListener('change', e => process(e.target.files[0]));
+  document.getElementById('gal').addEventListener('change', e => process(e.target.files[0]));
 
-        if (data.error) throw new Error(data.error);
+  // Drag & drop
+  const dropZone = document.getElementById('drop-zone');
+  dropZone.addEventListener('click', () => document.getElementById('gal').click());
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f && f.type.startsWith('image/')) process(f);
+  });
 
-        // Add new items (avoid duplicates)
-        const existing = items.map(i => i.text.toLowerCase());
-        let added = 0;
-        for (const item of data.items) {
-          if (!existing.includes(item.toLowerCase())) {
-            items.push({ text: item, checked: false });
-            added++;
-          }
-        }
+  function process(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      showPreview(e.target.result);
+      analyze(e.target.result);
+    };
+    reader.readAsDataURL(file);
+  }
 
-        saveList();
-        renderList();
+  function showPreview(src) {
+    document.getElementById('preview-img').src = src;
+    document.getElementById('preview-wrap').style.display = 'block';
+    document.getElementById('drop-zone').style.display = 'none';
+    hide('error-box'); hide('flash-box');
+  }
 
-        if (added === 0) {
-          showError('Aucun nouvel article trouvé (tous déjà présents).');
-        }
-      } catch (err) {
-        showError('Erreur : ' + err.message);
-      } finally {
-        spinner.style.display = 'none';
-      }
-    }
+  function resetPreview() {
+    document.getElementById('preview-wrap').style.display = 'none';
+    document.getElementById('drop-zone').style.display = '';
+    document.getElementById('cam').value = '';
+    document.getElementById('gal').value = '';
+    hide('error-box'); hide('flash-box');
+  }
 
-    function showError(msg) {
-      const el = document.getElementById('error-msg');
-      el.textContent = msg;
-      el.style.display = 'block';
-    }
+  // ── Analyze ────────────────────────────────────────
+  async function analyze(dataUrl) {
+    show('analyzing'); hide('error-box'); hide('flash-box');
 
-    function renderList() {
-      const ul = document.getElementById('shopping-list');
-      const emptyState = document.getElementById('empty-state');
-      const clearBtn = document.getElementById('clear-btn');
-      const statsEl = document.getElementById('list-stats');
-      const progressContainer = document.getElementById('progress-container');
-      const progressBar = document.getElementById('progress-bar');
-
-      ul.innerHTML = '';
-
-      if (items.length === 0) {
-        emptyState.style.display = 'block';
-        clearBtn.style.display = 'none';
-        statsEl.textContent = '';
-        progressContainer.style.display = 'none';
-        return;
-      }
-
-      emptyState.style.display = 'none';
-      clearBtn.style.display = 'block';
-
-      const checked = items.filter(i => i.checked).length;
-      statsEl.textContent = `${checked}/${items.length}`;
-
-      if (items.length > 1) {
-        progressContainer.style.display = 'block';
-        progressBar.style.width = `${(checked / items.length) * 100}%`;
-      } else {
-        progressContainer.style.display = 'none';
-      }
-
-      items.forEach((item, idx) => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <input type="checkbox" id="item-${idx}" ${item.checked ? 'checked' : ''} onchange="toggleItem(${idx})">
-          <label for="item-${idx}" class="item-text ${item.checked ? 'checked' : ''}">${escapeHtml(item.text)}</label>
-          <button class="item-delete" onclick="deleteItem(${idx})" title="Supprimer">✕</button>
-        `;
-        ul.appendChild(li);
+    try {
+      const res = await fetch('/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: dataUrl })
       });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+
+      const existing = new Set(items.map(i => i.text.toLowerCase()));
+      const newItems = data.items.filter(t => !existing.has(t.toLowerCase()));
+      newItems.forEach(t => items.push({ text: t, done: false }));
+      save(); render();
+
+      showFlash(newItems.length
+        ? `✅ ${newItems.length} article${newItems.length > 1 ? 's' : ''} ajouté${newItems.length > 1 ? 's' : ''}`
+        : '⚠️ Aucun nouvel article trouvé');
+    } catch (err) {
+      showError(err.message);
+    } finally {
+      hide('analyzing');
+    }
+  }
+
+  // ── Render ─────────────────────────────────────────
+  function render() {
+    const ul = document.getElementById('item-list');
+    const empty = document.getElementById('empty-state');
+    const clearBtn = document.getElementById('clear-btn');
+    const uncheckBtn = document.getElementById('uncheck-btn');
+    const badge = document.getElementById('header-badge');
+    const fill = document.getElementById('progress-fill');
+
+    ul.innerHTML = '';
+
+    if (items.length === 0) {
+      empty.style.display = '';
+      clearBtn.style.display = 'none';
+      uncheckBtn.style.display = 'none';
+      badge.style.display = 'none';
+      fill.style.width = '0%';
+      return;
     }
 
-    function toggleItem(idx) {
-      items[idx].checked = !items[idx].checked;
-      saveList();
-      renderList();
-    }
+    empty.style.display = 'none';
+    clearBtn.style.display = '';
+    const doneCount = items.filter(i => i.done).length;
+    uncheckBtn.style.display = doneCount > 0 ? '' : 'none';
+    badge.style.display = '';
+    badge.textContent = `${doneCount}/${items.length}`;
+    fill.style.width = `${(doneCount / items.length) * 100}%`;
 
-    function deleteItem(idx) {
-      items.splice(idx, 1);
-      saveList();
-      renderList();
-    }
+    items.forEach((item, idx) => {
+      const li = document.createElement('li');
+      li.className = 'item';
+      li.innerHTML = `
+        <input type="checkbox" id="cb${idx}" ${item.done ? 'checked' : ''} onchange="toggle(${idx})">
+        <label for="cb${idx}" class="item-label ${item.done ? 'done' : ''}">${esc(item.text)}</label>
+        <button class="item-del" onclick="del(${idx})">✕</button>
+      `;
+      ul.appendChild(li);
+    });
+  }
 
-    function clearList() {
-      if (confirm('Vider toute la liste ?')) {
-        items = [];
-        saveList();
-        renderList();
-      }
-    }
+  function toggle(idx) {
+    items[idx].done = !items[idx].done;
+    save(); render();
+  }
 
-    function addManualItem() {
-      const input = document.getElementById('manual-input');
-      const text = input.value.trim();
-      if (!text) return;
-      items.push({ text, checked: false });
-      input.value = '';
-      saveList();
-      renderList();
-    }
+  function del(idx) {
+    items.splice(idx, 1);
+    save(); render();
+  }
 
-    function saveList() {
-      localStorage.setItem('shopping-list', JSON.stringify(items));
+  function clearList() {
+    if (confirm('Supprimer tous les articles ?')) {
+      items = []; save(); render();
     }
+  }
 
-    function escapeHtml(str) {
-      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-  </script>
+  function uncheckAll() {
+    items.forEach(i => i.done = false);
+    save(); render();
+  }
+
+  function addManual() {
+    const inp = document.getElementById('manual-input');
+    const text = inp.value.trim();
+    if (!text) return;
+    items.push({ text, done: false });
+    inp.value = '';
+    save(); render();
+  }
+
+  // ── Helpers ────────────────────────────────────────
+  function save() { localStorage.setItem('items', JSON.stringify(items)); }
+
+  function show(id) { document.getElementById(id).style.display = 'flex'; }
+  function hide(id) { document.getElementById(id).style.display = 'none'; }
+
+  function showError(msg) {
+    const el = document.getElementById('error-box');
+    el.textContent = '⚠️ ' + msg;
+    el.style.display = 'block';
+  }
+
+  function showFlash(msg) {
+    const el = document.getElementById('flash-box');
+    el.textContent = msg;
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 3000);
+  }
+
+  function esc(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+</script>
 </body>
 </html>
