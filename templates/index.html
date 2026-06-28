@@ -2,631 +2,305 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Courses</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cotes 1N2 → 120 min → Expected Points MPP</title>
   <style>
     :root {
-      --green: #16a34a;
-      --green-light: #dcfce7;
-      --green-dark: #14532d;
-      --red: #dc2626;
-      --red-light: #fee2e2;
-      --bg: #f9fafb;
-      --card: #ffffff;
-      --border: #e5e7eb;
-      --text: #111827;
-      --muted: #6b7280;
-      --radius: 14px;
+      --bg: #0f1420;
+      --card: #18203020;
+      --panel: #1b2333;
+      --panel2: #222c40;
+      --line: #2c3850;
+      --txt: #e7ecf5;
+      --muted: #92a0bb;
+      --accent: #3ea6ff;
+      --green: #36d399;
+      --gold: #f5c542;
+      --red: #f06464;
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
+    * { box-sizing: border-box; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100dvh;
-      padding-bottom: env(safe-area-inset-bottom);
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 50% -10%, #1a2336 0%, #0f1420 60%);
+      color: var(--txt);
+      min-height: 100vh;
+      padding: 24px 14px 60px;
     }
-
-    /* ── Header ── */
-    .header {
-      background: var(--green);
-      color: white;
-      padding: 18px 20px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    .header-left h1 {
-      font-size: 1.25rem;
-      font-weight: 700;
-    }
-
-    .header-left p {
-      font-size: 0.75rem;
-      opacity: 0.8;
-      margin-top: 1px;
-    }
-
-    .header-badge {
-      background: rgba(255,255,255,0.2);
-      border-radius: 99px;
-      padding: 4px 12px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-
-    /* ── Container ── */
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    /* ── Card ── */
+    .wrap { max-width: 760px; margin: 0 auto; }
+    h1 { font-size: 22px; margin: 0 0 4px; }
+    .sub { color: var(--muted); font-size: 13px; margin: 0 0 22px; }
     .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      overflow: hidden;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px 18px 20px;
+      margin-bottom: 18px;
     }
-
-    .card-header {
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border);
+    .card h2 {
+      font-size: 13px; text-transform: uppercase; letter-spacing: .08em;
+      color: var(--muted); margin: 0 0 14px; font-weight: 600;
     }
-
-    .card-title {
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-    }
-
-    /* ── Upload zone ── */
-    .upload-zone {
-      margin: 12px;
-      border: 2px dashed var(--border);
-      border-radius: 10px;
-      padding: 24px 16px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-    }
-
-    .upload-zone:hover, .upload-zone.drag-over {
-      border-color: var(--green);
-      background: var(--green-light);
-    }
-
-    .upload-zone .icon {
-      font-size: 2rem;
-      margin-bottom: 6px;
-    }
-
-    .upload-zone p {
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-
-    .upload-zone strong {
-      display: block;
-      color: var(--green);
-      font-size: 0.9rem;
-      margin-bottom: 2px;
-    }
-
-    .btn-row {
-      display: flex;
-      gap: 8px;
-      padding: 0 12px 12px;
-    }
-
-    .btn {
-      flex: 1;
-      padding: 11px 8px;
-      border: none;
-      border-radius: 10px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      transition: filter 0.15s, transform 0.1s;
-    }
-
-    .btn:active { transform: scale(0.96); }
-    .btn:disabled { opacity: 0.45; pointer-events: none; }
-
-    .btn-green { background: var(--green); color: white; }
-    .btn-green:hover { filter: brightness(1.1); }
-    .btn-outline { background: var(--bg); color: var(--text); border: 1.5px solid var(--border); }
-    .btn-outline:hover { background: var(--border); }
-
-    input[type="file"] { display: none; }
-
-    /* ── Preview ── */
-    #preview-wrap {
-      display: none;
-      position: relative;
-      margin: 0 12px 12px;
-    }
-
-    #preview-wrap img {
+    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .field .tag { font-weight: 700; color: var(--txt); }
+    input[type="number"] {
       width: 100%;
-      max-height: 200px;
-      object-fit: cover;
+      background: var(--panel2);
+      border: 1px solid var(--line);
       border-radius: 10px;
-      display: block;
-    }
-
-    #remove-preview {
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      width: 26px;
-      height: 26px;
-      background: rgba(0,0,0,0.55);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 0.75rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* ── Analyzing state ── */
-    .analyzing {
-      display: none;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 14px;
-      color: var(--green);
-      font-size: 0.875rem;
-      font-weight: 500;
-    }
-
-    .dot-loader span {
-      display: inline-block;
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--green);
-      animation: bounce 1.2s ease-in-out infinite;
-    }
-
-    .dot-loader span:nth-child(2) { animation-delay: 0.2s; }
-    .dot-loader span:nth-child(3) { animation-delay: 0.4s; }
-
-    @keyframes bounce {
-      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-      40% { transform: scale(1); opacity: 1; }
-    }
-
-    /* ── Error ── */
-    .error-box {
-      display: none;
-      margin: 0 12px 12px;
-      background: var(--red-light);
-      color: var(--red);
-      border-radius: 8px;
-      padding: 10px 12px;
-      font-size: 0.82rem;
-    }
-
-    /* ── Success flash ── */
-    .flash {
-      display: none;
-      margin: 0 12px 12px;
-      background: var(--green-light);
-      color: var(--green-dark);
-      border-radius: 8px;
-      padding: 10px 12px;
-      font-size: 0.82rem;
-      font-weight: 500;
-    }
-
-    /* ── Progress ── */
-    .progress-bar {
-      height: 3px;
-      background: var(--border);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: var(--green);
-      transition: width 0.4s ease;
-    }
-
-    /* ── List ── */
-    .list-actions {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .text-btn {
-      background: none;
-      border: none;
-      font-size: 0.75rem;
-      cursor: pointer;
-      padding: 3px 6px;
-      border-radius: 5px;
-      transition: background 0.15s;
-    }
-
-    .text-btn-red { color: var(--red); }
-    .text-btn-red:hover { background: var(--red-light); }
-    .text-btn-muted { color: var(--muted); }
-    .text-btn-muted:hover { background: var(--bg); }
-
-    #list-wrap {
-      padding: 4px 0;
-    }
-
-    .item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 11px 16px;
-      border-bottom: 1px solid #f3f4f6;
-      animation: fadeSlide 0.18s ease;
-    }
-
-    .item:last-child { border-bottom: none; }
-
-    @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(4px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .item input[type="checkbox"] {
-      width: 19px;
-      height: 19px;
-      accent-color: var(--green);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .item-label {
-      flex: 1;
-      font-size: 0.95rem;
-      cursor: pointer;
-      word-break: break-word;
-      transition: color 0.15s;
-      text-transform: capitalize;
-    }
-
-    .item-label.done {
-      color: #9ca3af;
-      text-decoration: line-through;
-    }
-
-    .item-del {
-      background: none;
-      border: none;
-      color: #d1d5db;
-      cursor: pointer;
-      font-size: 1rem;
-      padding: 2px 5px;
-      border-radius: 4px;
-      transition: color 0.15s;
-      line-height: 1;
-      flex-shrink: 0;
-    }
-
-    .item-del:hover { color: var(--red); }
-
-    /* ── Empty ── */
-    .empty {
+      color: var(--txt);
+      font-size: 18px;
+      padding: 11px 12px;
       text-align: center;
-      padding: 28px 16px;
-      color: var(--muted);
+      -moz-appearance: textfield;
     }
+    input:focus { outline: none; border-color: var(--accent); }
+    .hint { font-size: 11px; color: var(--muted); margin-top: 8px; }
 
-    .empty .big { font-size: 2.2rem; margin-bottom: 6px; }
-    .empty p { font-size: 0.85rem; line-height: 1.5; }
-
-    /* ── Add manually ── */
-    .add-row {
-      display: flex;
-      gap: 8px;
-      padding: 10px 12px;
-      border-top: 1px solid var(--border);
+    .row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; text-align: center; }
+    .out {
+      background: var(--panel2); border: 1px solid var(--line);
+      border-radius: 12px; padding: 12px 8px;
     }
-
-    .add-row input {
-      flex: 1;
-      padding: 9px 12px;
-      border: 1.5px solid var(--border);
-      border-radius: 9px;
-      font-size: 0.9rem;
-      outline: none;
-      transition: border-color 0.2s;
-      background: var(--bg);
+    .out .k { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+    .out .v { font-size: 22px; font-weight: 700; margin-top: 4px; }
+    .out .v.small { font-size: 16px; }
+    .out.best { border-color: var(--green); box-shadow: 0 0 0 1px var(--green) inset; }
+    .badge {
+      display: inline-block; font-size: 10px; font-weight: 700; color: #062018;
+      background: var(--green); border-radius: 6px; padding: 2px 6px; margin-top: 6px;
     }
-
-    .add-row input:focus { border-color: var(--green); background: white; }
-
-    .add-row button {
-      padding: 9px 14px;
-      background: var(--green);
-      color: white;
-      border: none;
-      border-radius: 9px;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: filter 0.15s;
-    }
-
-    .add-row button:hover { filter: brightness(1.1); }
+    .meta { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 14px; font-size: 12px; color: var(--muted); }
+    .meta b { color: var(--txt); font-weight: 600; }
+    .ep .v { color: var(--gold); }
+    .legend { font-size: 11px; color: var(--muted); margin-top: 10px; line-height: 1.5; }
+    details { margin-top: 12px; }
+    summary { cursor: pointer; color: var(--accent); font-size: 12px; }
+    .adv { display: flex; align-items: center; gap: 10px; margin-top: 12px; font-size: 12px; color: var(--muted); }
+    .adv input { width: 90px; font-size: 14px; padding: 7px; }
+    .err { color: var(--red); font-size: 13px; margin-top: 10px; min-height: 16px; }
+    .pill { font-size: 12px; color: var(--muted); }
   </style>
 </head>
 <body>
+  <div class="wrap">
+    <h1>⚽ Cotes 1N2 → Probabilités 120 min → Points MPP</h1>
+    <p class="sub">Entre les cotes du temps réglementaire (90 min). L'app déduit les probabilités, les extrapole sur 120 min (prolongation) et calcule tes expected points MonPetitProno.</p>
 
-<header class="header">
-  <div class="header-left">
-    <h1>🛒 Courses</h1>
-    <p>Photo → liste automatique</p>
-  </div>
-  <span class="header-badge" id="header-badge" style="display:none"></span>
-</header>
-
-<div class="container">
-
-  <!-- Scan card -->
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">Scanner une liste</span>
-    </div>
-
-    <div class="upload-zone" id="drop-zone">
-      <div class="icon">📷</div>
-      <strong>Prends ou dépose une photo</strong>
-      <p>JPG, PNG, HEIC · la liste sera extraite automatiquement</p>
-    </div>
-
-    <div class="btn-row">
-      <button class="btn btn-green" onclick="document.getElementById('cam').click()">
-        📷 Appareil photo
-      </button>
-      <button class="btn btn-outline" onclick="document.getElementById('gal').click()">
-        🖼 Galerie
-      </button>
-    </div>
-
-    <input type="file" id="cam" accept="image/*" capture="environment">
-    <input type="file" id="gal" accept="image/*">
-
-    <div id="preview-wrap">
-      <img id="preview-img" alt="">
-      <button id="remove-preview" onclick="resetPreview()">✕</button>
-    </div>
-
-    <div class="analyzing" id="analyzing">
-      <div class="dot-loader"><span></span><span></span><span></span></div>
-      Claude analyse la photo…
-    </div>
-
-    <div class="error-box" id="error-box"></div>
-    <div class="flash" id="flash-box"></div>
-  </div>
-
-  <!-- List card -->
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">Ma liste</span>
-      <div class="list-actions">
-        <button class="text-btn text-btn-muted" id="uncheck-btn" onclick="uncheckAll()" style="display:none">Tout décocher</button>
-        <button class="text-btn text-btn-red" id="clear-btn" onclick="clearList()" style="display:none">Tout supprimer</button>
+    <!-- Cotes -->
+    <div class="card">
+      <h2>1 · Cotes 1N2 (90 min)</h2>
+      <div class="grid3">
+        <div class="field">
+          <label><span class="tag">1</span> · Domicile</label>
+          <input type="number" id="c1" step="0.01" min="1.01" inputmode="decimal" value="2.10">
+        </div>
+        <div class="field">
+          <label><span class="tag">N</span> · Nul</label>
+          <input type="number" id="cN" step="0.01" min="1.01" inputmode="decimal" value="3.30">
+        </div>
+        <div class="field">
+          <label><span class="tag">2</span> · Extérieur</label>
+          <input type="number" id="c2" step="0.01" min="1.01" inputmode="decimal" value="3.60">
+        </div>
+      </div>
+      <div class="err" id="err"></div>
+      <div class="meta">
+        <span>Marge bookmaker : <b id="overround">–</b></span>
+        <span>λ domicile : <b id="lh">–</b></span>
+        <span>λ extérieur : <b id="la">–</b></span>
       </div>
     </div>
 
-    <div class="progress-bar">
-      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
-    </div>
-
-    <div id="list-wrap">
-      <div class="empty" id="empty-state">
-        <div class="big">🧾</div>
-        <p>La liste est vide.<br>Scanne une photo ou ajoute des articles.</p>
+    <!-- Probas 90 -->
+    <div class="card">
+      <h2>2 · Probabilités réelles 90 min</h2>
+      <div class="row">
+        <div class="out"><div class="k">1 Domicile</div><div class="v" id="p1_90">–</div></div>
+        <div class="out"><div class="k">N Nul</div><div class="v" id="pN_90">–</div></div>
+        <div class="out"><div class="k">2 Extérieur</div><div class="v" id="p2_90">–</div></div>
       </div>
-      <ul id="item-list" style="list-style:none"></ul>
+      <p class="legend">Probabilités « vraies » obtenues en retirant la marge du book (normalisation proportionnelle des 1/cote).</p>
     </div>
 
-    <div class="add-row">
-      <input type="text" id="manual-input" placeholder="Ajouter un article…" onkeydown="if(event.key==='Enter')addManual()">
-      <button onclick="addManual()">＋</button>
+    <!-- Probas 120 -->
+    <div class="card">
+      <h2>3 · Probabilités extrapolées 120 min</h2>
+      <div class="row">
+        <div class="out"><div class="k">1 Domicile</div><div class="v" id="p1_120">–</div></div>
+        <div class="out"><div class="k">N Nul (→ t.a.b.)</div><div class="v" id="pN_120">–</div></div>
+        <div class="out"><div class="k">2 Extérieur</div><div class="v" id="p2_120">–</div></div>
+      </div>
+      <p class="legend">
+        Modèle&nbsp;: les buts suivent deux lois de Poisson (λ ajustés sur les cotes 90 min). La prolongation
+        (30 min = ⅓ de match) ne se joue que si le match est nul après 90 min&nbsp;; une partie des nuls se
+        décante alors. « N » = encore nul après 120 min, donc tirs au but.
+      </p>
+      <div class="adv">
+        <label for="etFactor">Intensité prolongation (1 = ⅓ de match) :</label>
+        <input type="number" id="etFactor" step="0.05" min="0.1" max="2" value="1.00">
+      </div>
+    </div>
+
+    <!-- Points MPP -->
+    <div class="card">
+      <h2>4 · Points MonPetitProno par issue</h2>
+      <div class="grid3">
+        <div class="field">
+          <label><span class="tag">1</span> · si Domicile</label>
+          <input type="number" id="pts1" step="1" min="0" inputmode="numeric" value="3">
+        </div>
+        <div class="field">
+          <label><span class="tag">N</span> · si Nul</label>
+          <input type="number" id="ptsN" step="1" min="0" inputmode="numeric" value="3">
+        </div>
+        <div class="field">
+          <label><span class="tag">2</span> · si Extérieur</label>
+          <input type="number" id="pts2" step="1" min="0" inputmode="numeric" value="3">
+        </div>
+      </div>
+      <p class="hint">Points que MPP attribue selon le résultat (issue à 120 min). Mets le barème de ton match.</p>
+    </div>
+
+    <!-- Expected points -->
+    <div class="card">
+      <h2>5 · Expected points (points × proba 120 min)</h2>
+      <div class="row ep">
+        <div class="out" id="epBox1"><div class="k">Parier 1</div><div class="v small" id="ep1">–</div><div id="badge1"></div></div>
+        <div class="out" id="epBoxN"><div class="k">Parier N</div><div class="v small" id="epN">–</div><div id="badgeN"></div></div>
+        <div class="out" id="epBox2"><div class="k">Parier 2</div><div class="v small" id="ep2">–</div><div id="badge2"></div></div>
+      </div>
+      <p class="legend" id="reco">–</p>
     </div>
   </div>
 
-</div>
+  <script>
+    "use strict";
+    const MAX = 12;
+    const FACT = [1];
+    for (let i = 1; i <= MAX; i++) FACT[i] = FACT[i - 1] * i;
 
-<script>
-  // ── State ──────────────────────────────────────────
-  let items = JSON.parse(localStorage.getItem('items') || '[]');
-  render();
+    function poissonPmf(k, lambda) {
+      if (lambda <= 0) return k === 0 ? 1 : 0;
+      return Math.exp(-lambda) * Math.pow(lambda, k) / FACT[k];
+    }
 
-  // ── File inputs ────────────────────────────────────
-  document.getElementById('cam').addEventListener('change', e => process(e.target.files[0]));
-  document.getElementById('gal').addEventListener('change', e => process(e.target.files[0]));
+    // Probabilités d'issue (1/N/2) pour deux Poisson indépendants sur une période.
+    function outcomeProbs(lh, la) {
+      const H = [], A = [];
+      for (let k = 0; k <= MAX; k++) { H[k] = poissonPmf(k, lh); A[k] = poissonPmf(k, la); }
+      let p1 = 0, pN = 0, p2 = 0;
+      for (let i = 0; i <= MAX; i++) {
+        for (let j = 0; j <= MAX; j++) {
+          const pr = H[i] * A[j];
+          if (i > j) p1 += pr;
+          else if (i === j) pN += pr;
+          else p2 += pr;
+        }
+      }
+      const s = p1 + pN + p2;
+      return { p1: p1 / s, pN: pN / s, p2: p2 / s };
+    }
 
-  // Drag & drop
-  const dropZone = document.getElementById('drop-zone');
-  dropZone.addEventListener('click', () => document.getElementById('gal').click());
-  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-  dropZone.addEventListener('drop', e => {
-    e.preventDefault();
-    dropZone.classList.remove('drag-over');
-    const f = e.dataTransfer.files[0];
-    if (f && f.type.startsWith('image/')) process(f);
-  });
+    // Ajuste (λ_dom, λ_ext) pour reproduire les probas 90 min cibles, par recherche sur grille + raffinage.
+    function fitLambdas(t1, tN) {
+      function err(lh, la) {
+        const o = outcomeProbs(lh, la);
+        return (o.p1 - t1) ** 2 + (o.pN - tN) ** 2;
+      }
+      let best = { lh: 1.2, la: 1.0, e: Infinity };
+      // grille grossière
+      for (let lh = 0.05; lh <= 4.5; lh += 0.05) {
+        for (let la = 0.05; la <= 4.5; la += 0.05) {
+          const e = err(lh, la);
+          if (e < best.e) best = { lh, la, e };
+        }
+      }
+      // raffinage local
+      for (let lh = best.lh - 0.05; lh <= best.lh + 0.05; lh += 0.005) {
+        for (let la = best.la - 0.05; la <= best.la + 0.05; la += 0.005) {
+          if (lh <= 0 || la <= 0) continue;
+          const e = err(lh, la);
+          if (e < best.e) best = { lh, la, e };
+        }
+      }
+      return best;
+    }
 
-  function process(file) {
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-      showPreview(e.target.result);
-      analyze(e.target.result);
-    };
-    reader.readAsDataURL(file);
-  }
+    function num(id) { return parseFloat(document.getElementById(id).value); }
+    function pct(x) { return (x * 100).toFixed(1) + " %"; }
 
-  function showPreview(src) {
-    document.getElementById('preview-img').src = src;
-    document.getElementById('preview-wrap').style.display = 'block';
-    document.getElementById('drop-zone').style.display = 'none';
-    hide('error-box'); hide('flash-box');
-  }
+    function compute() {
+      const errEl = document.getElementById("err");
+      const c1 = num("c1"), cN = num("cN"), c2 = num("c2");
 
-  function resetPreview() {
-    document.getElementById('preview-wrap').style.display = 'none';
-    document.getElementById('drop-zone').style.display = '';
-    document.getElementById('cam').value = '';
-    document.getElementById('gal').value = '';
-    hide('error-box'); hide('flash-box');
-  }
+      if (![c1, cN, c2].every(v => v > 1)) {
+        errEl.textContent = "Entre des cotes valides (> 1.00) pour 1, N et 2.";
+        return;
+      }
+      errEl.textContent = "";
 
-  // ── Analyze ────────────────────────────────────────
-  async function analyze(dataUrl) {
-    show('analyzing'); hide('error-box'); hide('flash-box');
+      // 1) probas implicites + retrait de marge (normalisation proportionnelle)
+      const r1 = 1 / c1, rN = 1 / cN, r2 = 1 / c2;
+      const overround = r1 + rN + r2;
+      const p1 = r1 / overround, pN = rN / overround, p2 = r2 / overround;
 
-    try {
-      const res = await fetch('/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: dataUrl })
+      document.getElementById("overround").textContent = ((overround - 1) * 100).toFixed(2) + " %";
+      document.getElementById("p1_90").textContent = pct(p1);
+      document.getElementById("pN_90").textContent = pct(pN);
+      document.getElementById("p2_90").textContent = pct(p2);
+
+      // 2) ajustement Poisson sur 90 min
+      const { lh, la } = fitLambdas(p1, pN);
+      document.getElementById("lh").textContent = lh.toFixed(2);
+      document.getElementById("la").textContent = la.toFixed(2);
+
+      // 3) prolongation : mini-match de 30 min = (1/3) × facteur
+      let f = num("etFactor"); if (!(f > 0)) f = 1;
+      const scale = (30 / 90) * f;
+      const et = outcomeProbs(lh * scale, la * scale);
+
+      // résultat 120 min : la prolongation ne s'applique qu'aux nuls de 90 min
+      const P1 = p1 + pN * et.p1;
+      const PN = pN * et.pN;
+      const P2 = p2 + pN * et.p2;
+
+      document.getElementById("p1_120").textContent = pct(P1);
+      document.getElementById("pN_120").textContent = pct(PN);
+      document.getElementById("p2_120").textContent = pct(P2);
+
+      // 4 & 5) expected points
+      const pts1 = num("pts1") || 0, ptsN = num("ptsN") || 0, pts2 = num("pts2") || 0;
+      const ep1 = pts1 * P1, epN = ptsN * PN, ep2 = pts2 * P2;
+
+      document.getElementById("ep1").textContent = ep1.toFixed(2);
+      document.getElementById("epN").textContent = epN.toFixed(2);
+      document.getElementById("ep2").textContent = ep2.toFixed(2);
+
+      const eps = [
+        { key: "1", label: "Domicile", ep: ep1, box: "epBox1", badge: "badge1" },
+        { key: "N", label: "Nul", ep: epN, box: "epBoxN", badge: "badgeN" },
+        { key: "2", label: "Extérieur", ep: ep2, box: "epBox2", badge: "badge2" },
+      ];
+      let bestEp = Math.max(ep1, epN, ep2);
+      let bestLabel = "";
+      eps.forEach(o => {
+        document.getElementById(o.box).classList.remove("best");
+        document.getElementById(o.badge).innerHTML = "";
+        if (o.ep === bestEp) {
+          document.getElementById(o.box).classList.add("best");
+          document.getElementById(o.badge).innerHTML = '<span class="badge">MEILLEUR</span>';
+          bestLabel = o.label + " (" + o.key + ")";
+        }
       });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
-
-      const existing = new Set(items.map(i => i.text.toLowerCase()));
-      const newItems = data.items.filter(t => !existing.has(t.toLowerCase()));
-      newItems.forEach(t => items.push({ text: t, done: false }));
-      save(); render();
-
-      showFlash(newItems.length
-        ? `✅ ${newItems.length} article${newItems.length > 1 ? 's' : ''} ajouté${newItems.length > 1 ? 's' : ''}`
-        : '⚠️ Aucun nouvel article trouvé');
-    } catch (err) {
-      showError(err.message);
-    } finally {
-      hide('analyzing');
-    }
-  }
-
-  // ── Render ─────────────────────────────────────────
-  function render() {
-    const ul = document.getElementById('item-list');
-    const empty = document.getElementById('empty-state');
-    const clearBtn = document.getElementById('clear-btn');
-    const uncheckBtn = document.getElementById('uncheck-btn');
-    const badge = document.getElementById('header-badge');
-    const fill = document.getElementById('progress-fill');
-
-    ul.innerHTML = '';
-
-    if (items.length === 0) {
-      empty.style.display = '';
-      clearBtn.style.display = 'none';
-      uncheckBtn.style.display = 'none';
-      badge.style.display = 'none';
-      fill.style.width = '0%';
-      return;
+      document.getElementById("reco").innerHTML =
+        "Pari à expected points maximal : <b style='color:var(--green)'>" + bestLabel +
+        "</b> avec <b style='color:var(--gold)'>" + bestEp.toFixed(2) + " pts</b> espérés.";
     }
 
-    empty.style.display = 'none';
-    clearBtn.style.display = '';
-    const doneCount = items.filter(i => i.done).length;
-    uncheckBtn.style.display = doneCount > 0 ? '' : 'none';
-    badge.style.display = '';
-    badge.textContent = `${doneCount}/${items.length}`;
-    fill.style.width = `${(doneCount / items.length) * 100}%`;
-
-    items.forEach((item, idx) => {
-      const li = document.createElement('li');
-      li.className = 'item';
-      li.innerHTML = `
-        <input type="checkbox" id="cb${idx}" ${item.done ? 'checked' : ''} onchange="toggle(${idx})">
-        <label for="cb${idx}" class="item-label ${item.done ? 'done' : ''}">${esc(item.text)}</label>
-        <button class="item-del" onclick="del(${idx})">✕</button>
-      `;
-      ul.appendChild(li);
-    });
-  }
-
-  function toggle(idx) {
-    items[idx].done = !items[idx].done;
-    save(); render();
-  }
-
-  function del(idx) {
-    items.splice(idx, 1);
-    save(); render();
-  }
-
-  function clearList() {
-    if (confirm('Supprimer tous les articles ?')) {
-      items = []; save(); render();
-    }
-  }
-
-  function uncheckAll() {
-    items.forEach(i => i.done = false);
-    save(); render();
-  }
-
-  function addManual() {
-    const inp = document.getElementById('manual-input');
-    const text = inp.value.trim();
-    if (!text) return;
-    items.push({ text, done: false });
-    inp.value = '';
-    save(); render();
-  }
-
-  // ── Helpers ────────────────────────────────────────
-  function save() { localStorage.setItem('items', JSON.stringify(items)); }
-
-  function show(id) { document.getElementById(id).style.display = 'flex'; }
-  function hide(id) { document.getElementById(id).style.display = 'none'; }
-
-  function showError(msg) {
-    const el = document.getElementById('error-box');
-    el.textContent = '⚠️ ' + msg;
-    el.style.display = 'block';
-  }
-
-  function showFlash(msg) {
-    const el = document.getElementById('flash-box');
-    el.textContent = msg;
-    el.style.display = 'block';
-    setTimeout(() => el.style.display = 'none', 3000);
-  }
-
-  function esc(s) {
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-</script>
+    document.querySelectorAll("input").forEach(el => el.addEventListener("input", compute));
+    compute();
+  </script>
 </body>
 </html>
