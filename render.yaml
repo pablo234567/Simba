@@ -1,9 +1,6 @@
 services:
   - type: web
-    name: liste-de-courses
+    name: cotes-mpp
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: python app.py
-    envVars:
-      - key: ANTHROPIC_API_KEY
-        sync: false
+    startCommand: gunicorn app:app
